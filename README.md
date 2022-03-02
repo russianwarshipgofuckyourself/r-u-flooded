@@ -14,5 +14,5 @@ cargo build
 ## Usage
 
 ```bash
-./r-u-flooded <ip address> <number of threads> <time (0 for infinite)>
+./r-u-flooded <ip address> <number of threads> <time (0 for infinite)> <port>
 ```
