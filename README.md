@@ -16,3 +16,15 @@ cargo build
 ```bash
 ./r-u-flooded <ip address> <number of threads> <time (0 for infinite)> <port>
 ```
+
+## Docker
+
+Build
+```
+docker build --pull -t r-u-flooded .
+```
+
+Usage
+```
+docker run -it --rm r-u-flooded <ip address> <number of threads> <time (0 for infinite)> <port>
+```
